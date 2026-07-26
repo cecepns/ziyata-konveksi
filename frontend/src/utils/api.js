@@ -1,7 +1,9 @@
 import axios from "axios";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "https://api.kingcreativestudio.my.id/ziyata-konveksi/api";
+
 export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "/api",
+  baseURL: API_BASE_URL,
 });
 
 // Interceptor untuk menyisipkan Bearer Token

@@ -18,7 +18,7 @@ app.use(cors());
 app.use(express.json());
 
 // Ensure upload directory exists
-const uploadDir = path.join(__dirname, '../uploads-konveksi');
+const uploadDir = path.join(__dirname, 'uploads-ziyata-konveksi');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
 }
@@ -49,7 +49,7 @@ pool.getConnection()
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
-  
+
   if (!token) {
     return res.status(401).json({ success: false, message: 'Akses ditolak, token tidak ditemukan' });
   }
@@ -471,7 +471,7 @@ app.get('/api/work-logs', authenticateToken, async (req, res) => {
 app.post('/api/work-logs', authenticateToken, async (req, res) => {
   try {
     const { work_date, model_id, quantity_pcs, fabric_type, fabric_weight_kg, notes } = req.body;
-    
+
     // Worker ID diambil dari token login jika pekerja, atau boleh diatur admin jika admin
     const worker_id = req.user.role === 'admin' && req.body.worker_id ? req.body.worker_id : req.user.id;
 

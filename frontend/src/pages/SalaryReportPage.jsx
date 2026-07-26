@@ -147,8 +147,8 @@ export const SalaryReportPage = () => {
                       <div>{row.worker_name}</div>
                       <div className="text-xs text-slate-400 font-normal">@{row.username}</div>
                     </td>
-                    <td className="py-3.5 px-4">
-                      <span className="text-xs font-semibold px-3 py-1 rounded-full bg-slate-100 text-slate-700">
+                    <td className="py-3.5 px-4 whitespace-nowrap">
+                      <span className="inline-flex items-center text-xs font-semibold px-3 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-200">
                         {getRoleLabel(row.worker_role)}
                       </span>
                     </td>

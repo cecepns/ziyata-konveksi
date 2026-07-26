@@ -210,8 +210,8 @@ export const ManageWorkersPage = () => {
                   <tr key={worker.id} className="hover:bg-slate-50/80 transition-colors">
                     <td className="py-3.5 px-4 font-bold text-slate-800">{worker.name}</td>
                     <td className="py-3.5 px-4 text-slate-600 font-mono text-xs">@{worker.username}</td>
-                    <td className="py-3.5 px-4">
-                      <span className="text-xs font-semibold px-3 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+                    <td className="py-3.5 px-4 whitespace-nowrap">
+                      <span className="inline-flex items-center text-xs font-semibold px-3 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-200">
                         {getRoleLabel(worker.role)}
                       </span>
                     </td>
