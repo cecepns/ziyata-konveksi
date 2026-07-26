@@ -1,9 +1,12 @@
 import axios from "axios";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "https://api.kingcreativestudio.my.id/ziyata-konveksi/api";
+let rawBaseUrl = import.meta.env.VITE_API_URL || "https://api.kingcreativestudio.my.id/ziyata-konveksi/api";
+if (!rawBaseUrl.endsWith('/')) {
+  rawBaseUrl += '/';
+}
 
 export const api = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: rawBaseUrl,
 });
 
 // Interceptor untuk menyisipkan Bearer Token
