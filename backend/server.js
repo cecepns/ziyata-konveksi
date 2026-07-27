@@ -346,10 +346,39 @@ app.get('/api/piece-rates', authenticateToken, async (req, res) => {
   }
 });
 
-// SAVE/UPSERT PIECE RATE
+// SAVE/UPSERT PIECE RATE (Supports both Batch and Single update)
 app.post('/api/piece-rates', authenticateToken, requireAdmin, async (req, res) => {
   try {
-    const { model_id, role, price_per_piece } = req.body;
+    const { model_id, rates } = req.body;
+    
+    // If rates is an object, do a batch save
+    if (model_id && rates && typeof rates === 'object') {
+      const connection = await pool.getConnection();
+      try {
+        await connection.beginTransaction();
+        for (const [role, price] of Object.entries(rates)) {
+          const priceVal = parseFloat(price);
+          if (isNaN(priceVal) || priceVal < 0) continue;
+          
+          const query = `
+            INSERT INTO piece_rates (model_id, role, price_per_piece)
+            VALUES (?, ?, ?)
+            ON DUPLICATE KEY UPDATE price_per_piece = VALUES(price_per_piece)
+          `;
+          await connection.query(query, [model_id, role, priceVal]);
+        }
+        await connection.commit();
+        return res.json({ success: true, message: 'Semua harga borong berhasil diperbarui' });
+      } catch (err) {
+        await connection.rollback();
+        throw err;
+      } finally {
+        connection.release();
+      }
+    }
+
+    // Fallback: Single save
+    const { role, price_per_piece } = req.body;
     if (!model_id || !role || price_per_piece === undefined) {
       return res.status(400).json({ success: false, message: 'Field model, role, dan harga wajib diisi' });
     }
@@ -362,6 +391,17 @@ app.post('/api/piece-rates', authenticateToken, requireAdmin, async (req, res) =
     await pool.query(query, [model_id, role, price_per_piece]);
 
     res.json({ success: true, message: 'Harga borong per pcs berhasil diperbarui' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err.message });
+  }
+});
+
+// DELETE/RESET PIECE RATES FOR A MODEL
+app.delete('/api/piece-rates/:model_id', authenticateToken, requireAdmin, async (req, res) => {
+  try {
+    const { model_id } = req.params;
+    await pool.query('DELETE FROM piece_rates WHERE model_id = ?', [model_id]);
+    res.json({ success: true, message: 'Semua harga borong untuk model ini berhasil dihapus' });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }

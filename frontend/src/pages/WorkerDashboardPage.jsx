@@ -16,8 +16,8 @@ import {
 
 export const WorkerDashboardPage = ({ user }) => {
   const [models, setModels] = useState([]);
-  const [summary, setSummary] = useState({ todayPcs: 0, monthPcs: 0 });
-  const [loading, setLoading] = useState(false);
+  const [summary, setSummary] = useState({ todayPcs: 0, monthPcs: 0, todaySalary: 0 });
+  const [loading, setLoading] = useState(true);
 
   // Form State Input Rekap Harian
   const [workDate, setWorkDate] = useState(new Date().toISOString().split('T')[0]);
@@ -139,7 +139,7 @@ export const WorkerDashboardPage = ({ user }) => {
           <div>
             <div className="text-slate-400 text-xs font-medium">Total Pcs Hari Ini</div>
             <div className="text-2xl font-bold text-slate-800 mt-1">
-              {summary.todayPcs.toLocaleString('id-ID')} <span className="text-xs font-normal text-slate-400">pcs</span>
+              {(summary?.todayPcs ?? 0).toLocaleString('id-ID')} <span className="text-xs font-normal text-slate-400">pcs</span>
             </div>
           </div>
         </div>
@@ -151,7 +151,7 @@ export const WorkerDashboardPage = ({ user }) => {
           <div>
             <div className="text-slate-400 text-xs font-medium">Estimasi Gaji Hari Ini</div>
             <div className="text-2xl font-bold text-emerald-600 mt-1">
-              Rp {summary.todaySalary.toLocaleString('id-ID')}
+              Rp {(summary?.todaySalary ?? 0).toLocaleString('id-ID')}
             </div>
           </div>
         </div>
@@ -163,7 +163,7 @@ export const WorkerDashboardPage = ({ user }) => {
           <div>
             <div className="text-sky-200 text-xs font-medium">Total Pcs Bulan Ini</div>
             <div className="text-2xl font-bold mt-1">
-              {summary.monthPcs.toLocaleString('id-ID')} <span className="text-xs font-normal text-sky-200">pcs</span>
+              {(summary?.monthPcs ?? 0).toLocaleString('id-ID')} <span className="text-xs font-normal text-sky-200">pcs</span>
             </div>
           </div>
         </div>

@@ -18,6 +18,7 @@ export const API_ENDPOINTS = {
   PIECE_RATES: {
     LIST: "piece-rates",
     SAVE: "piece-rates",
+    DELETE: (model_id) => `piece-rates/${model_id}`,
   },
   WORK_LOGS: {
     LIST: "work-logs",
