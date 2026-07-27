@@ -44,6 +44,7 @@ CREATE TABLE `work_logs` (
   `quantity_pcs` INT NOT NULL DEFAULT 0,
   `fabric_type` VARCHAR(100) NULL, -- Khusus Pemotong (e.g. Lotto, Cotton)
   `fabric_weight_kg` DECIMAL(8,2) NULL, -- Khusus Pemotong (Netto / Panjang Kain kg)
+  `work_location` VARCHAR(50) NULL, -- Khusus Obras (e.g. Di Tempat Kerja, Di Rumah (Lembur))
   `notes` TEXT NULL,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`worker_id`) REFERENCES `users`(`id`) ON DELETE CASCADE,

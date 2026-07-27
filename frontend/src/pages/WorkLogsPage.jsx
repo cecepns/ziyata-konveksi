@@ -146,7 +146,7 @@ export const WorkLogsPage = ({ user }) => {
                   {isAdmin && <th className="py-3.5 px-4">Nama Pekerja</th>}
                   <th className="py-3.5 px-4">Role Job</th>
                   <th className="py-3.5 px-4">Model Dikerjakan</th>
-                  <th className="py-3.5 px-4">Detail Khusus (Potong)</th>
+                  <th className="py-3.5 px-4">Detail / Lokasi</th>
                   <th className="py-3.5 px-4 text-right">Hasil (Pcs)</th>
                   <th className="py-3.5 px-4 text-right">Tarif / Pcs</th>
                   <th className="py-3.5 px-4 text-right">Total Upah</th>
@@ -179,6 +179,10 @@ export const WorkLogsPage = ({ user }) => {
                           {log.fabric_weight_kg && (
                             <div className="text-slate-500">Berat: {log.fabric_weight_kg} kg</div>
                           )}
+                        </div>
+                      ) : log.worker_role === 'obras' && log.work_location ? (
+                        <div className="space-y-0.5">
+                          <div className="font-semibold text-emerald-700">{log.work_location}</div>
                         </div>
                       ) : (
                         <span className="text-slate-300">-</span>

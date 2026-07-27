@@ -18,6 +18,7 @@ export const WorkerDashboardPage = ({ user }) => {
   const [models, setModels] = useState([]);
   const [summary, setSummary] = useState({ todayPcs: 0, monthPcs: 0, todaySalary: 0 });
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
 
   // Form State Input Rekap Harian
   const [workDate, setWorkDate] = useState(new Date().toISOString().split('T')[0]);
@@ -25,6 +26,7 @@ export const WorkerDashboardPage = ({ user }) => {
   const [quantityPcs, setQuantityPcs] = useState('');
   const [fabricType, setFabricType] = useState('');
   const [fabricWeightKg, setFabricWeightKg] = useState('');
+  const [workLocation, setWorkLocation] = useState('Di Tempat Kerja');
   const [notes, setNotes] = useState('');
 
   const isPotongRole = user?.role === 'potong';
@@ -76,7 +78,8 @@ export const WorkerDashboardPage = ({ user }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!quantity || quantity <= 0) {
+    const qty = Number(quantityPcs);
+    if (!qty || qty <= 0) {
       toast.error('Jumlah pcs wajib lebih dari 0');
       return;
     }
@@ -84,21 +87,23 @@ export const WorkerDashboardPage = ({ user }) => {
     setSubmitting(true);
     try {
       const payload = {
-        work_date: date,
+        work_date: workDate,
         model_id: Number(modelId),
-        quantity_pcs: Number(quantity),
+        quantity_pcs: qty,
         notes,
         fabric_type: isPotongRole ? fabricType : undefined,
-        fabric_weight_kg: isPotongRole && fabricWeight ? parseFloat(fabricWeight) : undefined
+        fabric_weight_kg: isPotongRole && fabricWeightKg ? parseFloat(fabricWeightKg) : undefined,
+        work_location: user?.role === 'obras' ? workLocation : undefined
       };
 
       const res = await request.post(API_ENDPOINTS.WORK_LOGS.CREATE, payload);
       if (res.success) {
         toast.success('Hasil kerja harian berhasil dicatat!');
-        setQuantity('');
+        setQuantityPcs('');
         setNotes('');
         setFabricType('');
-        setFabricWeight('');
+        setFabricWeightKg('');
+        setWorkLocation('Di Tempat Kerja');
         fetchSummary();
       }
     } catch (err) {
@@ -278,6 +283,24 @@ export const WorkerDashboardPage = ({ user }) => {
             />
           </div>
 
+          {/* Khusus Tukang Obras: Lokasi Kerja */}
+          {user?.role === 'obras' && (
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
+                Dikerjakan Di
+              </label>
+              <select
+                value={workLocation}
+                onChange={(e) => setWorkLocation(e.target.value)}
+                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-sky-500 font-medium"
+                required
+              >
+                <option value="Di Tempat Kerja">Di Tempat Kerja</option>
+                <option value="Di Rumah (Lembur)">Di Rumah (Lembur)</option>
+              </select>
+            </div>
+          )}
+
           {/* Catatan / Keterangan (Opsional) */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
@@ -295,10 +318,10 @@ export const WorkerDashboardPage = ({ user }) => {
           {/* Submit Button */}
           <button
             type="submit"
-            disabled={loading}
+            disabled={submitting}
             className="w-full py-4 px-6 bg-sky-600 hover:bg-sky-500 text-white font-bold rounded-2xl shadow-lg shadow-sky-600/30 flex items-center justify-center gap-2 transition-all disabled:opacity-50 text-base"
           >
-            {loading ? (
+            {submitting ? (
               <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
               <>

@@ -476,6 +476,7 @@ app.get('/api/work-logs', authenticateToken, async (req, res) => {
         wl.quantity_pcs,
         wl.fabric_type,
         wl.fabric_weight_kg,
+        wl.work_location,
         wl.notes,
         COALESCE(pr.price_per_piece, 0) as price_per_piece,
         (wl.quantity_pcs * COALESCE(pr.price_per_piece, 0)) as total_pay,
@@ -510,18 +511,27 @@ app.get('/api/work-logs', authenticateToken, async (req, res) => {
 // CREATE WORK LOG (Input Rekap Kerja Harian Pekerja)
 app.post('/api/work-logs', authenticateToken, async (req, res) => {
   try {
-    const { work_date, model_id, quantity_pcs, fabric_type, fabric_weight_kg, notes } = req.body;
+    const { work_date, model_id, quantity_pcs, fabric_type, fabric_weight_kg, work_location, notes } = req.body;
 
     // Worker ID diambil dari token login jika pekerja, atau boleh diatur admin jika admin
     const worker_id = req.user.role === 'admin' && req.body.worker_id ? req.body.worker_id : req.user.id;
+
+    // Ambil role worker dari database jika diinput oleh admin
+    let worker_role = req.user.role;
+    if (req.user.role === 'admin' && req.body.worker_id) {
+      const [workerRows] = await pool.query('SELECT role FROM users WHERE id = ?', [req.body.worker_id]);
+      if (workerRows.length > 0) {
+        worker_role = workerRows[0].role;
+      }
+    }
 
     if (!work_date || !model_id || !quantity_pcs) {
       return res.status(400).json({ success: false, message: 'Tanggal, Model, dan Jumlah (pcs) wajib diisi' });
     }
 
     const [result] = await pool.query(
-      `INSERT INTO work_logs (worker_id, work_date, model_id, quantity_pcs, fabric_type, fabric_weight_kg, notes)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO work_logs (worker_id, work_date, model_id, quantity_pcs, fabric_type, fabric_weight_kg, work_location, notes)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         worker_id,
         work_date,
@@ -529,6 +539,7 @@ app.post('/api/work-logs', authenticateToken, async (req, res) => {
         parseInt(quantity_pcs),
         fabric_type || null,
         fabric_weight_kg ? parseFloat(fabric_weight_kg) : null,
+        worker_role === 'obras' ? (work_location || 'Di Tempat Kerja') : null,
         notes || null
       ]
     );
