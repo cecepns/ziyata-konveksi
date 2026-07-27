@@ -141,6 +141,7 @@ export const ManageWorkersPage = () => {
       case 'obras': return 'Tukang Obras';
       case 'kelin': return 'Tukang Kelin / Hemming';
       case 'overdek': return 'Tukang Kolor / Overdek';
+      case 'sambung': return 'Tukang Sambung';
       default: return role;
     }
   };
@@ -152,7 +153,7 @@ export const ManageWorkersPage = () => {
         <div>
           <h1 className="text-2xl font-bold text-slate-800">Kelola Akun Pekerja</h1>
           <p className="text-slate-500 text-xs mt-0.5">
-            Daftar 5 jenis pekerja konveksi (Potong, Sablon, Obras, Kelin, Overdek) dan Admin.
+            Daftar 6 jenis pekerja konveksi (Potong, Sablon, Obras, Kelin, Overdek, Sambung) dan Admin.
           </p>
         </div>
         <button
@@ -185,6 +186,7 @@ export const ManageWorkersPage = () => {
           <option value="obras">Tukang Obras</option>
           <option value="kelin">Tukang Kelin / Hemming</option>
           <option value="overdek">Tukang Kolor / Overdek</option>
+          <option value="sambung">Tukang Sambung</option>
         </select>
       </div>
 
@@ -299,6 +301,7 @@ export const ManageWorkersPage = () => {
               <option value="obras">3. Tukang Obras</option>
               <option value="kelin">4. Tukang Kelin / Hemming</option>
               <option value="overdek">5. Tukang Kolor / Overdek</option>
+              <option value="sambung">6. Tukang Sambung</option>
               <option value="admin">User Admin</option>
             </select>
           </div>

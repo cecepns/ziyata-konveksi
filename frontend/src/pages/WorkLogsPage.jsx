@@ -71,6 +71,7 @@ export const WorkLogsPage = ({ user }) => {
       case 'obras': return 'bg-emerald-50 text-emerald-700 border-emerald-200';
       case 'kelin': return 'bg-amber-50 text-amber-700 border-amber-200';
       case 'overdek': return 'bg-purple-50 text-purple-700 border-purple-200';
+      case 'sambung': return 'bg-indigo-50 text-indigo-700 border-indigo-200';
       default: return 'bg-slate-50 text-slate-700 border-slate-200';
     }
   };
@@ -82,7 +83,7 @@ export const WorkLogsPage = ({ user }) => {
           {isAdmin ? 'Rekap Pekerjaan Harian Seluruh Pekerja' : 'Riwayat Rekap Pekerjaan Saya'}
         </h1>
         <p className="text-slate-500 text-xs mt-0.5">
-          Pencatatan hasil obras, kelin, overdek, potong, dan sablon yang diinput oleh pekerja.
+          Pencatatan hasil obras, kelin, overdek, potong, sablon, dan sambung yang diinput oleh pekerja.
         </p>
       </div>
 
@@ -107,6 +108,7 @@ export const WorkLogsPage = ({ user }) => {
             <option value="obras">Obras</option>
             <option value="kelin">Kelin / Hemming</option>
             <option value="overdek">Overdek / Kolor</option>
+            <option value="sambung">Sambung</option>
           </select>
         )}
 

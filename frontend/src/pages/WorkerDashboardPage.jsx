@@ -36,6 +36,7 @@ export const WorkerDashboardPage = ({ user }) => {
       case 'obras': return 'Tukang Obras';
       case 'kelin': return 'Tukang Kelin / Hemming';
       case 'overdek': return 'Tukang Kolor / Overdek';
+      case 'sambung': return 'Tukang Sambung';
       default: return role;
     }
   };
@@ -60,83 +61,108 @@ export const WorkerDashboardPage = ({ user }) => {
   };
 
   const fetchSummary = async () => {
+    setLoading(true);
     try {
-      const res = await request.get(API_ENDPOINTS.REPORTS.SUMMARY);
+      const res = await request.get(API_ENDPOINTS.WORK_LOGS.WORKER_SUMMARY);
       if (res.success) {
-        setSummary(res.summary);
+        setSummary(res.data);
       }
     } catch (err) {
       console.error(err);
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    if (!workDate || !modelId || !quantityPcs) {
-      toast.error('Tanggal, Model, dan Jumlah Pcs wajib diisi');
-      return;
-    }
-
-    if (parseInt(quantityPcs) <= 0) {
-      toast.error('Jumlah pcs harus lebih besar dari 0');
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const payload = {
-        work_date: workDate,
-        model_id: modelId,
-        quantity_pcs: parseInt(quantityPcs),
-        notes,
-        ...(isPotongRole && {
-          fabric_type: fabricType,
-          fabric_weight_kg: fabricWeightKg
-        })
-      };
-
-      const res = await request.post(API_ENDPOINTS.WORK_LOGS.CREATE, payload);
-      if (res.success) {
-        toast.success('Pekerjaan berhasil dicatat!');
-        setQuantityPcs('');
-        setFabricType('');
-        setFabricWeightKg('');
-        setNotes('');
-        fetchSummary();
-      }
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Gagal menyimpan rekap');
     } finally {
       setLoading(false);
     }
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!quantity || quantity <= 0) {
+      toast.error('Jumlah pcs wajib lebih dari 0');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const payload = {
+        work_date: date,
+        model_id: Number(modelId),
+        quantity_pcs: Number(quantity),
+        notes,
+        fabric_type: isPotongRole ? fabricType : undefined,
+        fabric_weight_kg: isPotongRole && fabricWeight ? parseFloat(fabricWeight) : undefined
+      };
+
+      const res = await request.post(API_ENDPOINTS.WORK_LOGS.CREATE, payload);
+      if (res.success) {
+        toast.success('Hasil kerja harian berhasil dicatat!');
+        setQuantity('');
+        setNotes('');
+        setFabricType('');
+        setFabricWeight('');
+        fetchSummary();
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Gagal menyimpan rekap kerja');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (loading) {
+    return <div className="py-12 text-center text-slate-400 text-sm">Memuat Dashboard...</div>;
+  }
+
   return (
-    <div className="space-y-6 max-w-3xl mx-auto">
-      {/* Header Info Worker */}
-      <div className="bg-gradient-to-r from-sky-600 to-sky-800 text-white rounded-3xl p-6 shadow-xl relative overflow-hidden">
+    <div className="space-y-6">
+      {/* Top Banner */}
+      <div className="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-sky-500/10 rounded-full blur-3xl" />
         <div className="relative z-10">
-          <span className="text-xs font-semibold text-sky-200 uppercase tracking-wider bg-white/10 px-3 py-1 rounded-full border border-white/20">
-            {getRoleLabel(user?.role)}
+          <span className="text-xs font-semibold text-sky-400 uppercase tracking-wider bg-sky-500/20 px-3 py-1 rounded-full border border-sky-500/30">
+            Pekerja Panel
           </span>
-          <h1 className="text-2xl sm:text-3xl font-bold mt-2">Halo, {user?.name}! 👋</h1>
-          <p className="text-sky-100 text-sm mt-1">
-            Inputkan hasil rekap pekerjaan harian Anda di bawah ini secara langsung.
+          <h1 className="text-2xl sm:text-4xl font-black tracking-tight mt-2">
+            Halo, {user?.name}!
+          </h1>
+          <p className="text-slate-400 text-sm mt-1 max-w-2xl">
+            Selamat datang kembali. Anda masuk sebagai <strong className="text-white font-semibold">{getRoleLabel(user?.role)}</strong>. Input hasil pengerjaan Anda di form bawah untuk kalkulasi gaji harian otomatis.
           </p>
         </div>
+      </div>
 
-        {/* Ringkasan Statistik Pekerja */}
-        <div className="grid grid-cols-2 gap-3 mt-6 pt-6 border-t border-white/20">
-          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10">
-            <div className="text-xs text-sky-200">Hasil Kerja Hari Ini</div>
-            <div className="text-2xl font-black text-white mt-1">
-              {summary.todayPcs.toLocaleString('id-ID')} <span className="text-xs font-normal text-sky-200">pcs</span>
+      {/* Metric Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs flex items-center gap-4">
+          <div className="p-4 bg-sky-50 text-sky-600 rounded-2xl">
+            <CheckCircle className="w-7 h-7" />
+          </div>
+          <div>
+            <div className="text-slate-400 text-xs font-medium">Total Pcs Hari Ini</div>
+            <div className="text-2xl font-bold text-slate-800 mt-1">
+              {summary.todayPcs.toLocaleString('id-ID')} <span className="text-xs font-normal text-slate-400">pcs</span>
             </div>
           </div>
-          <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 border border-white/10">
-            <div className="text-xs text-sky-200">Total Bulan Ini</div>
-            <div className="text-2xl font-black text-white mt-1">
+        </div>
+
+        <div className="bg-white rounded-3xl p-6 border border-slate-200/80 shadow-xs flex items-center gap-4">
+          <div className="p-4 bg-emerald-50 text-emerald-600 rounded-2xl">
+            <TrendingUp className="w-7 h-7" />
+          </div>
+          <div>
+            <div className="text-slate-400 text-xs font-medium">Estimasi Gaji Hari Ini</div>
+            <div className="text-2xl font-bold text-emerald-600 mt-1">
+              Rp {summary.todaySalary.toLocaleString('id-ID')}
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-sky-600 text-white rounded-3xl p-6 shadow-md shadow-sky-600/10 flex items-center gap-4">
+          <div className="p-4 bg-white/10 text-white rounded-2xl">
+            <Calendar className="w-7 h-7" />
+          </div>
+          <div>
+            <div className="text-sky-200 text-xs font-medium">Total Pcs Bulan Ini</div>
+            <div className="text-2xl font-bold mt-1">
               {summary.monthPcs.toLocaleString('id-ID')} <span className="text-xs font-normal text-sky-200">pcs</span>
             </div>
           </div>
@@ -151,7 +177,7 @@ export const WorkerDashboardPage = ({ user }) => {
           </div>
           <div>
             <h2 className="text-lg font-bold text-slate-800">Form Input Hasil Kerja Harian</h2>
-            <p className="text-slate-500 text-xs">Pencatatan hasil obras, kelin, overdek, potong, atau sablon</p>
+            <p className="text-slate-500 text-xs">Pencatatan hasil obras, kelin, overdek, potong, sablon, atau sambung</p>
           </div>
         </div>
 

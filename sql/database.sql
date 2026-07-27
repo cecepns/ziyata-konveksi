@@ -9,7 +9,7 @@ CREATE TABLE `users` (
   `username` VARCHAR(50) NOT NULL UNIQUE,
   `password` VARCHAR(255) NOT NULL,
   `name` VARCHAR(100) NOT NULL,
-  `role` ENUM('admin', 'potong', 'sablon', 'obras', 'kelin', 'overdek') NOT NULL DEFAULT 'obras',
+  `role` ENUM('admin', 'potong', 'sablon', 'obras', 'kelin', 'overdek', 'sambung') NOT NULL DEFAULT 'obras',
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -27,7 +27,7 @@ DROP TABLE IF EXISTS `piece_rates`;
 CREATE TABLE `piece_rates` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `model_id` INT NOT NULL,
-  `role` ENUM('potong', 'sablon', 'obras', 'kelin', 'overdek') NOT NULL,
+  `role` ENUM('potong', 'sablon', 'obras', 'kelin', 'overdek', 'sambung') NOT NULL,
   `price_per_piece` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY `unique_model_role` (`model_id`, `role`),

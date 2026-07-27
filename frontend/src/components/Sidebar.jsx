@@ -1,11 +1,11 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Users, 
-  Tag, 
-  ClipboardList, 
-  DollarSign, 
+import {
+  LayoutDashboard,
+  Users,
+  Tag,
+  ClipboardList,
+  DollarSign,
   Package,
   Scissors
 } from 'lucide-react';
@@ -41,16 +41,15 @@ export const Sidebar = ({ isOpen, user, onClose }) => {
 
       {/* Sidebar Drawer */}
       <aside
-        className={`fixed md:sticky top-0 left-0 z-40 h-screen w-64 bg-slate-900 text-slate-300 flex flex-col transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
-        }`}
+        className={`fixed md:sticky top-0 left-0 z-40 h-screen w-64 bg-slate-900 text-slate-300 flex flex-col transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'
+          }`}
       >
         <div className="p-5 border-b border-slate-800 flex items-center gap-3">
           <div className="p-2 bg-sky-500/20 text-sky-400 rounded-xl">
             <Package className="w-6 h-6" />
           </div>
           <div>
-            <h2 className="text-white font-bold text-base leading-tight">Sistem Konveksi</h2>
+            <h2 className="text-white font-bold text-base leading-tight">Sistem Ziyyata Mode</h2>
             <p className="text-slate-400 text-xs mt-0.5">Produksi & Rekap Gaji</p>
           </div>
         </div>
@@ -68,10 +67,9 @@ export const Sidebar = ({ isOpen, user, onClose }) => {
                   to={item.to}
                   onClick={() => onClose()}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm transition-colors ${
-                      isActive
-                        ? 'bg-sky-600 text-white shadow-sm'
-                        : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
+                    `flex items-center gap-3 px-3 py-2.5 rounded-xl font-medium text-sm transition-colors ${isActive
+                      ? 'bg-sky-600 text-white shadow-sm'
+                      : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800/60'
                     }`
                   }
                 >

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Menu, LogOut } from 'lucide-react';
+import logo from '../assets/logo.jpeg';
 
 export const Navbar = ({ user, onToggleSidebar, onLogout }) => {
   const getRoleLabel = (role) => {
@@ -10,6 +11,7 @@ export const Navbar = ({ user, onToggleSidebar, onLogout }) => {
       case 'obras': return 'Tukang Obras';
       case 'kelin': return 'Tukang Kelin / Hemming';
       case 'overdek': return 'Tukang Kolor / Overdek';
+      case 'sambung': return 'Tukang Sambung';
       default: return role;
     }
   };
@@ -27,9 +29,7 @@ export const Navbar = ({ user, onToggleSidebar, onLogout }) => {
         </button>
         {/* Logo & Title hanya di Mobile */}
         <div className="flex items-center gap-2 md:hidden">
-          <div className="w-8 h-8 rounded-lg bg-sky-600 flex items-center justify-center text-white font-bold shadow-sm">
-            K
-          </div>
+          <img src={logo} alt="Logo" className="w-8 h-8 rounded-lg object-cover shadow-xs border border-slate-100" />
           <span className="font-bold text-slate-800 tracking-tight text-base sm:text-lg">
             Rekap<span className="text-sky-600">Konveksi</span>
           </span>

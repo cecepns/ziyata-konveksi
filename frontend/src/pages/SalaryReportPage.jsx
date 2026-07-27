@@ -50,6 +50,7 @@ export const SalaryReportPage = () => {
       case 'obras': return 'Tukang Obras';
       case 'kelin': return 'Tukang Kelin / Hemming';
       case 'overdek': return 'Tukang Kolor / Overdek';
+      case 'sambung': return 'Tukang Sambung';
       default: return role;
     }
   };
@@ -86,6 +87,7 @@ export const SalaryReportPage = () => {
           <option value="obras">Tukang Obras</option>
           <option value="kelin">Tukang Kelin / Hemming</option>
           <option value="overdek">Tukang Kolor / Overdek</option>
+          <option value="sambung">Tukang Sambung</option>
         </select>
 
         <div className="flex items-center gap-2">

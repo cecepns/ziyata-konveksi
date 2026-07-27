@@ -50,7 +50,7 @@ export const LoginPage = ({ onLoginSuccess }) => {
           <div className="inline-flex p-3 bg-sky-500/10 text-sky-400 rounded-2xl mb-3 ring-1 ring-sky-500/30">
             <Scissors className="w-8 h-8" />
           </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Login Sistem Konveksi</h1>
+          <h1 className="text-2xl font-bold text-white tracking-tight">Login Ziyyata Mode</h1>
           <p className="text-slate-400 text-sm mt-1">Pencatatan Rekap Kerja & Gaji Pekerja</p>
         </div>
 
