@@ -29,10 +29,7 @@ export const Navbar = ({ user, onToggleSidebar, onLogout }) => {
         </button>
         {/* Logo & Title hanya di Mobile */}
         <div className="flex items-center gap-2 md:hidden">
-          <img src={logo} alt="Logo" className="w-8 h-8 rounded-lg object-cover shadow-xs border border-slate-100" />
-          <span className="font-bold text-slate-800 tracking-tight text-base sm:text-lg">
-            Rekap<span className="text-sky-600">Konveksi</span>
-          </span>
+          <img src={logo} alt="Logo" className="w-full h-8" />
         </div>
       </div>
 
