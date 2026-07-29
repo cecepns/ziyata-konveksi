@@ -22,6 +22,7 @@ export const ManagePieceRatesPage = () => {
     potong: '',
     sablon: '',
     obras: '',
+    obras_dirumah: '',
     kelin: '',
     overdek: '',
     sambung: '',
@@ -30,7 +31,8 @@ export const ManagePieceRatesPage = () => {
   const roles = [
     { key: 'potong', label: 'Tukang Potong Kain' },
     { key: 'sablon', label: 'Tukang Sablon' },
-    { key: 'obras', label: 'Tukang Obras' },
+    { key: 'obras', label: 'Obras (Di Tempat)' },
+    { key: 'obras_dirumah', label: 'Obras (Di Rumah)' },
     { key: 'kelin', label: 'Tukang Kelin / Hemming' },
     { key: 'overdek', label: 'Tukang Kolor / Overdek' },
     { key: 'sambung', label: 'Tukang Sambung' },
@@ -96,6 +98,7 @@ export const ManagePieceRatesPage = () => {
       potong: row.potong !== undefined ? row.potong : 0,
       sablon: row.sablon !== undefined ? row.sablon : 0,
       obras: row.obras !== undefined ? row.obras : 0,
+      obras_dirumah: row.obras_dirumah !== undefined ? row.obras_dirumah : 0,
       kelin: row.kelin !== undefined ? row.kelin : 0,
       overdek: row.overdek !== undefined ? row.overdek : 0,
       sambung: row.sambung !== undefined ? row.sambung : 0,
@@ -111,6 +114,7 @@ export const ManagePieceRatesPage = () => {
       potong: '',
       sablon: '',
       obras: '',
+      obras_dirumah: '',
       kelin: '',
       overdek: '',
       sambung: '',
@@ -137,6 +141,7 @@ export const ManagePieceRatesPage = () => {
           potong: parseFloat(pricesInput.potong),
           sablon: parseFloat(pricesInput.sablon),
           obras: parseFloat(pricesInput.obras),
+          obras_dirumah: parseFloat(pricesInput.obras_dirumah),
           kelin: parseFloat(pricesInput.kelin),
           overdek: parseFloat(pricesInput.overdek),
           sambung: parseFloat(pricesInput.sambung),
@@ -230,7 +235,8 @@ export const ManagePieceRatesPage = () => {
                   <th className="py-4 px-4 min-w-[150px]">Model Pakaian</th>
                   <th className="py-4 px-4 text-right">Potong Kain</th>
                   <th className="py-4 px-4 text-right">Sablon</th>
-                  <th className="py-4 px-4 text-right">Obras</th>
+                  <th className="py-4 px-4 text-right">Obras (Di Tempat)</th>
+                  <th className="py-4 px-4 text-right">Obras (Di Rumah)</th>
                   <th className="py-4 px-4 text-right">Kelin</th>
                   <th className="py-4 px-4 text-right">Overdek</th>
                   <th className="py-4 px-4 text-right">Nyambung</th>
@@ -254,6 +260,9 @@ export const ManagePieceRatesPage = () => {
                     </td>
                     <td className="py-3.5 px-4 text-right font-bold text-slate-700">
                       {row.obras > 0 ? `Rp ${row.obras.toLocaleString('id-ID')}` : <span className="text-slate-400 font-normal italic">-</span>}
+                    </td>
+                    <td className="py-3.5 px-4 text-right font-bold text-slate-700">
+                      {row.obras_dirumah > 0 ? `Rp ${row.obras_dirumah.toLocaleString('id-ID')}` : <span className="text-slate-400 font-normal italic">-</span>}
                     </td>
                     <td className="py-3.5 px-4 text-right font-bold text-slate-700">
                       {row.kelin > 0 ? `Rp ${row.kelin.toLocaleString('id-ID')}` : <span className="text-slate-400 font-normal italic">-</span>}
@@ -400,10 +409,10 @@ export const ManagePieceRatesPage = () => {
                   </div>
                 </div>
 
-                {/* Obras */}
+                {/* Obras (Di Tempat) */}
                 <div>
                   <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
-                    Obras
+                    Obras (Di Tempat)
                   </label>
                   <div className="relative">
                     <span className="absolute left-4 top-2.5 text-slate-400 text-sm font-bold">Rp</span>
@@ -411,6 +420,25 @@ export const ManagePieceRatesPage = () => {
                       type="number"
                       value={pricesInput.obras}
                       onChange={(e) => setPricesInput({ ...pricesInput, obras: e.target.value })}
+                      placeholder="0"
+                      className="w-full pl-11 pr-4 py-2 border border-slate-200 focus:ring-2 focus:ring-sky-500 rounded-xl text-sm font-bold text-slate-800"
+                      required
+                      min="0"
+                    />
+                  </div>
+                </div>
+
+                {/* Obras (Di Rumah) */}
+                <div>
+                  <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1">
+                    Obras (Di Rumah)
+                  </label>
+                  <div className="relative">
+                    <span className="absolute left-4 top-2.5 text-slate-400 text-sm font-bold">Rp</span>
+                    <input
+                      type="number"
+                      value={pricesInput.obras_dirumah}
+                      onChange={(e) => setPricesInput({ ...pricesInput, obras_dirumah: e.target.value })}
                       placeholder="0"
                       className="w-full pl-11 pr-4 py-2 border border-slate-200 focus:ring-2 focus:ring-sky-500 rounded-xl text-sm font-bold text-slate-800"
                       required

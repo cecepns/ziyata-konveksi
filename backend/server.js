@@ -478,13 +478,23 @@ app.get('/api/work-logs', authenticateToken, async (req, res) => {
         wl.fabric_weight_kg,
         wl.work_location,
         wl.notes,
-        COALESCE(pr.price_per_piece, 0) as price_per_piece,
-        (wl.quantity_pcs * COALESCE(pr.price_per_piece, 0)) as total_pay,
+        COALESCE(NULLIF(pr.price_per_piece, 0), pr_fallback.price_per_piece, 0) as price_per_piece,
+        (wl.quantity_pcs * COALESCE(NULLIF(pr.price_per_piece, 0), pr_fallback.price_per_piece, 0)) as total_pay,
         wl.created_at
       FROM work_logs wl
       JOIN users u ON wl.worker_id = u.id
       JOIN models m ON wl.model_id = m.id
-      LEFT JOIN piece_rates pr ON (pr.model_id = wl.model_id AND pr.role = u.role)
+      LEFT JOIN piece_rates pr ON (
+        pr.model_id = wl.model_id AND pr.role = (
+          CASE 
+            WHEN u.role = 'obras' AND wl.work_location LIKE '%Rumah%' THEN 'obras_dirumah'
+            ELSE u.role
+          END
+        )
+      )
+      LEFT JOIN piece_rates pr_fallback ON (
+        u.role = 'obras' AND wl.work_location LIKE '%Rumah%' AND pr_fallback.model_id = wl.model_id AND pr_fallback.role = 'obras'
+      )
       ${whereClause}
       ORDER BY wl.work_date DESC, wl.id DESC
       LIMIT ? OFFSET ?
@@ -607,10 +617,20 @@ app.get('/api/reports/salary', authenticateToken, requireAdmin, async (req, res)
         u.role as worker_role,
         COUNT(DISTINCT wl.id) as total_submissions,
         COALESCE(SUM(wl.quantity_pcs), 0) as total_pcs,
-        COALESCE(SUM(wl.quantity_pcs * COALESCE(pr.price_per_piece, 0)), 0) as total_salary
+        COALESCE(SUM(wl.quantity_pcs * COALESCE(NULLIF(pr.price_per_piece, 0), pr_fallback.price_per_piece, 0)), 0) as total_salary
       FROM users u
       LEFT JOIN work_logs wl ON u.id = wl.worker_id ${date_from || date_to ? 'AND ' + whereClause.replace('WHERE 1=1 AND ', '') : ''}
-      LEFT JOIN piece_rates pr ON (pr.model_id = wl.model_id AND pr.role = u.role)
+      LEFT JOIN piece_rates pr ON (
+        pr.model_id = wl.model_id AND pr.role = (
+          CASE 
+            WHEN u.role = 'obras' AND wl.work_location LIKE '%Rumah%' THEN 'obras_dirumah'
+            ELSE u.role
+          END
+        )
+      )
+      LEFT JOIN piece_rates pr_fallback ON (
+        u.role = 'obras' AND wl.work_location LIKE '%Rumah%' AND pr_fallback.model_id = wl.model_id AND pr_fallback.role = 'obras'
+      )
       WHERE u.role != 'admin' ${role ? 'AND u.role = ?' : ''}
       GROUP BY u.id, u.username, u.name, u.role
       ORDER BY total_salary DESC
@@ -653,8 +673,24 @@ app.get('/api/reports/summary', authenticateToken, async (req, res) => {
       const [todayRes] = await pool.query('SELECT COALESCE(SUM(quantity_pcs), 0) as total FROM work_logs WHERE worker_id = ? AND work_date = ?', [req.user.id, today]);
       todayPcs = todayRes[0].total;
 
-      const [monthRes] = await pool.query('SELECT COALESCE(SUM(quantity_pcs), 0) as total FROM work_logs WHERE worker_id = ? AND MONTH(work_date) = MONTH(CURRENT_DATE()) AND YEAR(work_date) = YEAR(CURRENT_DATE())', [req.user.id]);
-      monthPcs = monthRes[0].total;
+      const [todaySalaryRes] = await pool.query(`
+        SELECT COALESCE(SUM(wl.quantity_pcs * COALESCE(NULLIF(pr.price_per_piece, 0), pr_fallback.price_per_piece, 0)), 0) as total
+        FROM work_logs wl
+        JOIN users u ON wl.worker_id = u.id
+        LEFT JOIN piece_rates pr ON (
+          pr.model_id = wl.model_id AND pr.role = (
+            CASE 
+              WHEN u.role = 'obras' AND wl.work_location LIKE '%Rumah%' THEN 'obras_dirumah'
+              ELSE u.role
+            END
+          )
+        )
+        LEFT JOIN piece_rates pr_fallback ON (
+          u.role = 'obras' AND wl.work_location LIKE '%Rumah%' AND pr_fallback.model_id = wl.model_id AND pr_fallback.role = 'obras'
+        )
+        WHERE wl.worker_id = ? AND wl.work_date = ?
+      `, [req.user.id, today]);
+      var todaySalary = todaySalaryRes[0].total;
     }
 
     res.json({
@@ -662,6 +698,7 @@ app.get('/api/reports/summary', authenticateToken, async (req, res) => {
       summary: {
         todayPcs,
         monthPcs,
+        todaySalary: todaySalary || 0,
         totalWorkers
       }
     });

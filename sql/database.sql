@@ -27,7 +27,7 @@ DROP TABLE IF EXISTS `piece_rates`;
 CREATE TABLE `piece_rates` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,
   `model_id` INT NOT NULL,
-  `role` ENUM('potong', 'sablon', 'obras', 'kelin', 'overdek', 'sambung') NOT NULL,
+  `role` VARCHAR(50) NOT NULL,
   `price_per_piece` DECIMAL(12,2) NOT NULL DEFAULT 0.00,
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   UNIQUE KEY `unique_model_role` (`model_id`, `role`),
