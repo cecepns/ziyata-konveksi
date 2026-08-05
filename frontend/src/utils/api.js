@@ -1,6 +1,7 @@
 import axios from "axios";
 
-let rawBaseUrl = import.meta.env.VITE_API_URL || "https://api.kingcreativestudio.my.id/ziyata-konveksi/api";
+// let rawBaseUrl = import.meta.env.VITE_API_URL || "https://api.kingcreativestudio.my.id/ziyata-konveksi/api";
+let rawBaseUrl = import.meta.env.VITE_API_URL || "https://api.ziyyatamode.id/api";
 if (!rawBaseUrl.endsWith('/')) {
   rawBaseUrl += '/';
 }

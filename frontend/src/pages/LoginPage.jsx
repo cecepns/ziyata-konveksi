@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { request } from '../utils/request';
 import { API_ENDPOINTS } from '../utils/endpoints';
 import toast from 'react-hot-toast';
-import { LogIn, Scissors, Sparkles } from 'lucide-react';
+import { LogIn, Sparkles } from 'lucide-react';
+import logoImg from '../assets/logo.jpeg';
 
 export const LoginPage = ({ onLoginSuccess }) => {
   const [username, setUsername] = useState('');
@@ -47,10 +48,9 @@ export const LoginPage = ({ onLoginSuccess }) => {
 
       <div className="w-full max-w-md bg-slate-900/80 backdrop-blur-xl border border-slate-800 rounded-3xl p-8 shadow-2xl relative z-10">
         <div className="text-center mb-8">
-          <div className="inline-flex p-3 bg-sky-500/10 text-sky-400 rounded-2xl mb-3 ring-1 ring-sky-500/30">
-            <Scissors className="w-8 h-8" />
-          </div>
-          <h1 className="text-2xl font-bold text-white tracking-tight">Login Ziyyata Mode</h1>
+
+          <img src={logoImg} alt="Ziyyata Logo" className="w-auto h-10 mb-5 mx-auto rounded-xl object-cover" />
+          <h1 className="text-2xl font-bold text-white tracking-tight">Login</h1>
           <p className="text-slate-400 text-sm mt-1">Pencatatan Rekap Kerja & Gaji Pekerja</p>
         </div>
 
